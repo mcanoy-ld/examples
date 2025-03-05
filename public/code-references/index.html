@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
+    <title>SA: LD Pipelines</title>
+    <script src="https://unpkg.com/launchdarkly-js-client-sdk@3"></script>
+    <script src="/utils.js"></script>
+    <link rel="stylesheet" href="/release-pipelines/index.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    /> 
+  </head>
+  <body>
+    <body style="padding: 20px;">
+        <div id="backend-api">
+            <table><tr><td>Dev: </td><td><input type="checkbox" id="dev"/></td></tr></table>
+        </div>
+      
+    </body>
+    <script>
+    function main()
+    {
+      const flagKey = 'release-backend-api';
+
+      // Set up the evaluation context. This context should appear on your
+      // LaunchDarkly contexts dashboard soon after you run the demo.
+      const context = {
+        kind: 'user',
+        key: 'alpha-key',
+        name: 'Sandy'
+      };
+
+      var div = document.createElement('div');
+      document.body.appendChild(div);
+
+      if (!getClientSide('dev')) {
+        div.replaceChild(document.createTextNode('Please add client side ids as described in readme'), div.firstChild);
+        return;
+      }
+
+      /* Alpha */
+
+      const lddevclient = LDClient.initialize(getClientSide('dev'), context);
+
+      function renderDev() {
+        const flagValue = lddevclient.variation(flagKey, false);
+        document.getElementById("dev").checked = flagValue;
+      }
+      
+      lddevclient.on('failed', () => {
+        div.replaceChild(document.createTextNode('Prod Alpha SDK failed to initialize'), div.firstChild);
+      });
+      lddevclient.on('ready', renderDev);
+      lddevclient.on('change', renderDev);
+
+      /* End Alpha */
+    }
+    main();
+    </script>
+  </body>
+</html>

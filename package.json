@@ -1,0 +1,16 @@
+{
+    "name": "examples",
+    "version": "1.0.0",
+    "description": "LaunchDarkly for Node.js",
+    "main": "app.js",
+    "dependencies": {
+      "@launchdarkly/node-server-sdk": "^9.4.0",
+      "express": "^4.21.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.9"
+    },
+    "scripts": {
+    "dev": "nodemon app.js"
+    }
+}
