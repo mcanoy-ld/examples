@@ -6,6 +6,7 @@
     <title>SA: LD Pipelines</title>
     <script src="https://unpkg.com/launchdarkly-js-client-sdk@3"></script>
     <script src="/utils.js"></script>
+    <script src="/release-pipelines/rp.js"></script>
     <link rel="stylesheet" href="/release-pipelines/index.css">
     <link
       rel="stylesheet"
@@ -14,6 +15,7 @@
   </head>
   <body>
     <body style="padding: 20px;">
+      <div id="lderror"></div>
       <table>
         <tr id="devrow"><td>Dev: All Users</td><td><input type="checkbox" id="dev-any"/></td><td>Prod: Alpha Users</td><td><input type="checkbox" id="prod-alpha"/></td></tr>
         <tr id="qarow"><td>QA: All Users</td><td><input type="checkbox" id="qa-any"/></td><td>Prod: Beta Users</td><td><input type="checkbox" id="prod-beta"/></td></tr>
@@ -29,17 +31,6 @@
     function main()
     {
 
-      // Set flagKey to the feature flag key you want to evaluate
-      const flagKey = 'release-widget-ui';
-
-      // Set up the evaluation context. This context should appear on your
-      // LaunchDarkly contexts dashboard soon after you run the demo.
-      const context = {
-        kind: 'user',
-        key: 'alpha-key',
-        name: 'Sandy'
-      };
-
       var div = document.createElement('div');
       document.body.appendChild(div);
 
@@ -48,111 +39,7 @@
         return;
       }
 
-      /* Dev */
-      const lddevclient = LDClient.initialize(getClientSide('dev'), context);
-      
-      function renderDev() {
-        const flagValue = lddevclient.variation(flagKey, false);
-        document.getElementById("dev-any").checked = flagValue;
-      }
-
-      lddevclient.on('failed', () => {  div.replaceChild(document.createTextNode('Dev SDK failed to initialize'), div.firstChild); });
-      lddevclient.on('ready', renderDev);
-      lddevclient.on('change', renderDev);
-
-      /* End Dev */
-
-      /* QA */
-      const ldqaclient = LDClient.initialize(getClientSide('qa'), context);
-      
-      function renderQA() {
-        const flagValue = ldqaclient.variation(flagKey, false);
-        document.getElementById("qa-any").checked = flagValue;
-      }
-
-      ldqaclient.on('failed', () => {  div.replaceChild(document.createTextNode('QA SDK failed to initialize'), div.firstChild); });
-      ldqaclient.on('ready', renderQA);
-      ldqaclient.on('change', renderQA);
-
-      /* End QA */
-
-      /* Int */
-      const ldclient = LDClient.initialize(getClientSide('int'), context);
-      
-      function render() {
-        const flagValue = ldclient.variation(flagKey, false);
-        document.getElementById("int-any").checked = flagValue;
-      }
-
-      ldclient.on('failed', () => {  div.replaceChild(document.createTextNode('Int SDK failed to initialize'), div.firstChild); });
-      ldclient.on('ready', render);
-      ldclient.on('change', render);
-
-      /* End Int */
-
-
-      /* Alpha */
-
-      const ldprodalphaclient = LDClient.initialize(getClientSide('prod'), context);
-
-      function renderProdAlpha() {
-        const flagValue = ldprodalphaclient.variation(flagKey, false);
-        document.getElementById("prod-alpha").checked = flagValue;
-      }
-      
-      ldprodalphaclient.on('failed', () => {
-        div.replaceChild(document.createTextNode('Prod Alpha SDK failed to initialize'), div.firstChild);
-      });
-      ldprodalphaclient.on('ready', renderProdAlpha);
-      ldprodalphaclient.on('change', renderProdAlpha);
-
-      /* End Alpha */
-
-      /* Beta */
-
-      const betacontext = {
-        kind: 'user',
-        key: 'beta-key',
-        name: 'Sandy'
-      };
-
-      const ldprodbetaclient = LDClient.initialize(getClientSide('prod'), betacontext);
-
-      function renderProdBeta() {
-        const flagValue = ldprodbetaclient.variation(flagKey, false);
-        document.getElementById("prod-beta").checked = flagValue;
-      }
-      
-      ldprodbetaclient.on('failed', () => {
-        div.replaceChild(document.createTextNode('Prod Alpha SDK failed to initialize'), div.firstChild);
-      });
-      ldprodbetaclient.on('ready', renderProdBeta);
-      ldprodbetaclient.on('change', renderProdBeta);
-
-      /* End Beta */
-
-      /* Enterprise */
-
-      const enterprisecontext = {
-        kind: 'user',
-        key: 'enterprise-key',
-        name: 'Sandy'
-      };
-
-      const ldprodenterpriseclient = LDClient.initialize(getClientSide('prod'), enterprisecontext);
-
-      function renderProdEnterprise() {
-        const flagValue = ldprodenterpriseclient.variation(flagKey, false);
-        document.getElementById("prod-enterprise").checked = flagValue;
-      }
-      
-      ldprodenterpriseclient.on('failed', () => {
-        div.replaceChild(document.createTextNode('Prod Enterprise SDK failed to initialize'), div.firstChild);
-      });
-      ldprodenterpriseclient.on('ready', renderProdEnterprise);
-      ldprodenterpriseclient.on('change', renderProdEnterprise);
-
-      /* End Enterprise */
+      initLDClients('dev', 'qa', 'int', 'prod');
     }
     main();
     </script>
