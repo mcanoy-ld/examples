@@ -38,7 +38,6 @@ function getClientSide(env) {
 
 Once this is setup run `npm run dev`. Go to `localhost:3000`. Run your release pipeline to show how the pipeline can change the value progressively.
 
-//TODO cleanup and organized by example and possibly complicate the example.
 //TODO remove need for sdk key at start up (not needed for this example).
 
 ## Code References
