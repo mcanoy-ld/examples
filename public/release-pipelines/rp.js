@@ -5,25 +5,29 @@ const flagKey = 'release-widget-ui';
 const basicContext = {
     kind: 'user',
     key: 'basic-key',
-    name: 'Basil'
+    name: 'Basil',
+    tier: 'Free'
   };
 
 const alphaContext = {
     kind: 'user',
     key: 'alpha-key',
-    name: 'Alfie'
+    name: 'Alfie',
+    tier: 'EAP'
   };
 
 const betacontext = {
     kind: 'user',
     key: 'beta-key',
-    name: 'Beto'
+    name: 'Beto',
+    tier: 'Beta'
   };
 
 const enterprisecontext = {
     kind: 'user',
     key: 'enterprise-key',
-    name: 'Enzo'
+    name: 'Enzo',
+    tier: 'Enterprise'
   };
 
 ldcontexts.set('dev', basicContext);

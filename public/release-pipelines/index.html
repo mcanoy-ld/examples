@@ -14,19 +14,44 @@
     /> 
   </head>
   <body>
-    <body style="padding: 20px;">
+    <div style="padding: 20px;">
+      <header class="page-header">
+        <h1>Release Pipelines</h1>
+      </header>
       <div id="lderror"></div>
-      <table>
-        <tr id="devrow"><td>Dev: All Users</td><td><input type="checkbox" id="dev-any"/></td><td>Prod: Alpha Users</td><td><input type="checkbox" id="prod-alpha"/></td></tr>
-        <tr id="qarow"><td>QA: All Users</td><td><input type="checkbox" id="qa-any"/></td><td>Prod: Beta Users</td><td><input type="checkbox" id="prod-beta"/></td></tr>
-        <tr id="introw"><td>Int: All Users</td><td><input type="checkbox" id="int-any"/></td><td>Prod: Enterprise Users</td><td><input type="checkbox" id="prod-enterprise"/></td></tr>
-        <tr id="prodalpharow"></tr>
-        <tr id="prodbetarow"></tr>
-        <tr id="prodenterpriserow"></tr>
-      </table>
-      
-      
-    </body>
+      <div class="pipeline-container">
+        <div class="pipeline-panel" id="dev-panel" data-context='{"kind":"user","key":"basic-key","name":"Basil","tier":"Free"}'>
+          <h3>Dev: All Users</h3>
+          <input type="checkbox" id="dev-any"/>
+        </div>
+        
+        <div class="pipeline-panel" id="qa-panel" data-context='{"kind":"user","key":"basic-key","name":"Basil","tier":"Free"}'>
+          <h3>QA: All Users</h3>
+          <input type="checkbox" id="qa-any"/>
+        </div>
+        
+        <div class="pipeline-panel" id="int-panel" data-context='{"kind":"user","key":"basic-key","name":"Basil","tier":"Free"}'>
+          <h3>Int: All Users</h3>
+          <input type="checkbox" id="int-any"/>
+        </div>
+        
+        <div class="pipeline-panel" id="prod-alpha-panel" data-context='{"kind":"user","key":"alpha-key","name":"Alfie","tier":"EAP"}'>
+          <h3>Prod: Alpha Users</h3>
+          <input type="checkbox" id="prod-alpha"/>
+        </div>
+        
+        <div class="pipeline-panel" id="prod-beta-panel" data-context='{"kind":"user","key":"beta-key","name":"Beto","tier":"Beta"}'>
+          <h3>Prod: Beta Users</h3>
+          <input type="checkbox" id="prod-beta"/>
+        </div>
+        
+        <div class="pipeline-panel" id="prod-enterprise-panel" data-context='{"kind":"user","key":"enterprise-key","name":"Enzo","tier":"Enterprise"}'>
+          <h3>Prod: Enterprise Users</h3>
+          <input type="checkbox" id="prod-enterprise"/>
+        </div>
+      </div>
+    </div>
+    
     <script>
     function main()
     {
@@ -39,8 +64,77 @@
         return;
       }
 
+      // Prevent default checkbox behavior while keeping them clickable
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('click', function(e) {
+          e.preventDefault(); // Prevent the default checked state change
+          // The checkbox state can now be controlled programmatically
+          // You can add your custom logic here
+        });
+      });
+
+      // Add hover tooltips for context information
+      const panels = document.querySelectorAll('.pipeline-panel');
+      panels.forEach(panel => {
+        panel.addEventListener('mouseenter', function() {
+          const contextData = JSON.parse(this.dataset.context);
+          showContextTooltip(this, contextData);
+        });
+        
+        panel.addEventListener('mouseleave', function() {
+          hideContextTooltip();
+        });
+      });
+
       initLDClients('dev', 'qa', 'int', 'prod');
     }
+
+    function showContextTooltip(panel, contextData) {
+      // Remove any existing tooltip
+      hideContextTooltip();
+      
+      const tooltip = document.createElement('div');
+      tooltip.className = 'context-tooltip';
+      tooltip.innerHTML = `
+        <div class="tooltip-header">Context Info</div>
+        <div class="tooltip-content">
+          <div><strong>Kind:</strong> ${contextData.kind}</div>
+          <div><strong>Key:</strong> ${contextData.key}</div>
+          <div><strong>Name:</strong> ${contextData.name}</div>
+          <div><strong>Tier:</strong> ${contextData.tier}</div>
+        </div>
+      `;
+      
+      document.body.appendChild(tooltip);
+      
+      // Position tooltip near the panel
+      const panelRect = panel.getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      
+      let left = panelRect.left + (panelRect.width / 2) - (tooltipRect.width / 2);
+      let top = panelRect.bottom + 10;
+      
+      // Ensure tooltip stays within viewport
+      if (left < 10) left = 10;
+      if (left + tooltipRect.width > window.innerWidth - 10) {
+        left = window.innerWidth - tooltipRect.width - 10;
+      }
+      if (top + tooltipRect.height > window.innerHeight - 10) {
+        top = panelRect.top - tooltipRect.height - 10;
+      }
+      
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    }
+
+    function hideContextTooltip() {
+      const existingTooltip = document.querySelector('.context-tooltip');
+      if (existingTooltip) {
+        existingTooltip.remove();
+      }
+    }
+
     main();
     </script>
   </body>
