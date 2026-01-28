@@ -1,6 +1,14 @@
 
 const ldcontexts = new Map();
 const flagKey = 'release-widget-ui';
+const unusedKey = 'release-enable-dark-mode';
+
+const options = {
+    application: {
+        id: 'release-pipeline-demo',
+        version: '1.0.1',
+    }
+}
 
 const basicContext = {
     kind: 'user',
@@ -42,6 +50,7 @@ ldcontexts.set('prod-enterprise', enterprisecontext);
 */
 function renderEnv(ldclient, env, target) {
     const flagValue = ldclient.variation(flagKey, false);
+    console.log(`Render Event ${env}-${target}`);
     document.getElementById(`${env}-${target}`).checked = flagValue;
 }
 
@@ -49,7 +58,7 @@ function initLDClients(...inputEnvs) {
     inputEnvs.forEach(env => {
         if(env === 'prod') {
             ['alpha', 'beta', 'enterprise'].forEach(target => {
-                const ldclient = LDClient.initialize(getClientSide(env), ldcontexts.get(`${env}-${target}`));
+                const ldclient = LDClient.initialize(getClientSide(env), ldcontexts.get(`${env}-${target}`), options);
                 addEvents(ldclient, env, target);
             });
             
